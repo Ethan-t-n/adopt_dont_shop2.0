@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe Pet, type: :model do
   describe 'relationships' do
     it { should belong_to(:shelter) }
+    it { should have_many(:applications)}
+    it { should have_many(:applications).through(:pet_applications)}
   end
 
   describe 'validations' do
@@ -37,6 +39,13 @@ RSpec.describe Pet, type: :model do
       it 'returns the shelter name for the given pet' do
         expect(@pet_3.shelter_name).to eq(@shelter_1.name)
       end
+    end
+  end
+
+  describe '#search' do
+    it 'returns pet names that match the user input search' do
+      expect(Pet.search("Claw")).to eq([@pet_2])
+      expect(Pet.search("PiRat")).to eq([@pet_1])
     end
   end
 end
