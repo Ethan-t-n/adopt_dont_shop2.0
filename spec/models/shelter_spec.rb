@@ -43,6 +43,30 @@ RSpec.describe Shelter, type: :model do
     end
   end
 
+  describe '#shelters_with_pending_apps' do
+    it 'gets the shelters with pending applications' do
+      mystery_building = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
+      scooby = Pet.create!(name: 'Scooby', age: 2, breed: 'Great Dane', adoptable: true, shelter_id: mystery_building.id)
+      frank = Pet.create!(name: 'Frank', age: 1, breed: 'Pug', adoptable: true, shelter_id: mystery_building.id)
+      jeremy = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
+      PetApplication.create!(pet:scooby, application: jeremy)
+      PetApplication.create!(pet:frank, application: jeremy)
+
+
+      aurora_shelter = Shelter.create(name: 'Aurora shelter', city: 'Aurora, CO', foster_program: false, rank: 9)
+      bobert = Pet.create!(name: 'Bobert', age: 1, breed: 'Poodle', adoptable: true, shelter_id: aurora_shelter.id)
+      isaac = Application.create!(name: 'Jeremy', street_address: '123 No Ct', city: 'Centennial', state: 'CO', zipcode: '80124', description: 'I Am Lonely', status: 'Pending')
+      PetApplication.create!(pet: bobert, application: isaac)
+
+      boulder_shelter = Shelter.create(name: 'Boulder shelter', city: 'Boulder, CO', foster_program: false, rank: 9)
+      tank = Pet.create!(name: 'Tank', age: 1, breed: 'Chihuahua', adoptable: true, shelter_id: boulder_shelter.id)
+      chris = Application.create!(name: 'Chris', street_address: '554 Code st', city: 'Castle Rock', state: 'CO', zipcode: '80125', description: 'I Like Pets', status: 'Pending')
+      PetApplication.create!(pet: tank, application: chris)
+
+      expect(Shelter.shelters_with_pending_apps).to eq([aurora_shelter, boulder_shelter])
+    end
+  end
+
   describe 'instance methods' do
     describe '.adoptable_pets' do
       it 'only returns pets that are adoptable' do

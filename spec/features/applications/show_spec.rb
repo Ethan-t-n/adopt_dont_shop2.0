@@ -174,7 +174,7 @@ RSpec.describe 'show application' do
     expect(page).to have_button("Submit this Application")
   end
 
-  it 'doesnt show a submit section without and pets in application'do
+  it 'doesnt show a submit section without any pets in application'do
     application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
     shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
 
