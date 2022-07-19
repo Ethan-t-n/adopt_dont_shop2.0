@@ -32,7 +32,7 @@ RSpec.describe 'pet creation' do
       end
     end
 
-    context 'given invalid data' do
+    context 'invalid data' do
       it 're-renders the new form' do
         visit "/shelters/#{@shelter.id}/pets/new"
 

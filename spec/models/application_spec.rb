@@ -17,7 +17,7 @@ RSpec.describe Application, type: :model do
   end
 
   describe 'methods' do
-    it 'has_pets? returns true if application has pets associated' do
+    it 'has_pets? returns true if application has pets' do
       application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
       application_2 = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
       shelter = Shelter.create(name: 'Aurora shelter', city: 'Aurora, CO', foster_program: false, rank: 9)

@@ -34,8 +34,8 @@ class Shelter < ApplicationRecord
 
   def self.shelters_with_pending_apps
     pending = []
-    joined_shelters = Shelter.joins(pets: {applications: :pet_applications})
-    joined_shelters.each do |shelter|
+    shelters = Shelter.joins(pets: {applications: :pet_applications})
+    shelters.each do |shelter|
       shelter.pets.each do |pet|
         pet.pet_applications.each do |pet_app|
           if pet_app.application.status == 'Pending'
@@ -45,5 +45,9 @@ class Shelter < ApplicationRecord
       end
     end
     return pending.uniq
+  end
+
+  def self.order_by_reverse_alphabetical
+  Shelter.find_by_sql("Select * FROM shelters ORDER BY name DESC")
   end
 end

@@ -112,17 +112,17 @@ RSpec.describe 'the shelters index' do
     expect(page).to have_content("All Shelters")
   end
 
-  it 'can list shelters with pending applications' do
+  it 'lists shelters with pending applications' do
     mystery_building = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
     scooby = Pet.create!(name: 'Scooby', age: 2, breed: 'Great Dane', adoptable: true, shelter_id: mystery_building.id)
     frank = Pet.create!(name: 'Frank', age: 1, breed: 'Pug', adoptable: true, shelter_id: mystery_building.id)
-    jeremy = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
+    jeremy = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'Pending')
     PetApplication.create!(pet:scooby, application: jeremy)
     PetApplication.create!(pet:frank, application: jeremy)
 
     aurora_shelter = Shelter.create(name: 'Aurora shelter', city: 'Aurora, CO', foster_program: false, rank: 9)
     bobert = Pet.create!(name: 'Bobert', age: 1, breed: 'Poodle', adoptable: true, shelter_id: aurora_shelter.id)
-    isaac = Application.create!(name: 'Isaac', street_address: '123 No Ct', city: 'Centennial', state: 'CO', zipcode: '80124', description: 'I Am Lonely', status: 'Pending')
+    isaac = Application.create!(name: 'Isaac', street_address: '123 No Ct', city: 'Centennial', state: 'CO', zipcode: '80124', description: 'I Am Lonely', status: 'In Progress')
     PetApplication.create!(pet:bobert, application: isaac)
 
     visit 'admin/shelters'
@@ -130,7 +130,13 @@ RSpec.describe 'the shelters index' do
     within "#shelters_with_pending_apps" do
       expect(page).to have_content("Shelters with Pending Applications")
       expect(page).to have_content("Mystery Building")
-      expect(page).to("Aurora Shelter Pets")
+      expect(page).to_not have_content("Aurora Shelter")
     end
+  end
+  it 'displays the admin index in reverse alphabetical order' do
+    visit '/admin/shelters'
+
+    expect(@shelter_2.name).to appear_before(@shelter_3.name)
+    expect(@shelter_3.name).to appear_before(@shelter_1.name)
   end
 end

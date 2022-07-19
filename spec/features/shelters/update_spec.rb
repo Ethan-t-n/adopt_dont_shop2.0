@@ -12,7 +12,7 @@ RSpec.describe 'the shelter update' do
     expect(find('form')).to have_content('Foster program')
   end
 
-  context "given valid data" do
+  context "valid data" do
     it "submits the edit form and updates the shelter" do
       shelter = Shelter.create(name: 'Aurora shelter', city: 'Aurora, CO', foster_program: false, rank: 9)
 
@@ -30,7 +30,7 @@ RSpec.describe 'the shelter update' do
     end
   end
 
-  context "given invalid data" do
+  context "nvalid data" do
     it 're-renders the edit form' do
       shelter = Shelter.create(name: 'Aurora shelter', city: 'Aurora, CO', foster_program: false, rank: 9)
 

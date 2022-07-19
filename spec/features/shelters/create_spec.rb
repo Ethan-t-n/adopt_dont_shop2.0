@@ -14,7 +14,7 @@ RSpec.describe 'shelter creation' do
   end
 
   describe 'the shelter create' do
-    context 'given valid data' do
+    context 'valid data' do
       it 'creates the shelter' do
         visit '/shelters/new'
 
@@ -29,7 +29,7 @@ RSpec.describe 'shelter creation' do
       end
     end
 
-    context 'given invalid data' do
+    context 'invalid data' do
       it 're-renders the new form' do
         visit '/shelters/new'
         click_button 'Save'

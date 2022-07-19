@@ -19,7 +19,7 @@ RSpec.describe 'show application' do
     expect(page).to have_link('Scooby')
   end
 
-  it "has a field to search and add a Pet to this Application" do
+  it "has a search and add a Pet to this Application" do
     application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
     shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
 
@@ -36,7 +36,7 @@ RSpec.describe 'show application' do
     end
   end
 
-  it "show pet names that match the full name you put in" do
+  it "show pet names that match" do
     application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
     shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
 
@@ -60,7 +60,7 @@ RSpec.describe 'show application' do
     end
   end
 
-  it "show pet names that contain a portion of what was searched for" do
+  it "shows full name of pet with partial name of pet" do
     application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
     shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
 
@@ -184,7 +184,7 @@ RSpec.describe 'show application' do
     expect(page).to_not have_button("Submit this Application")
   end
 
-  it 'when submitted the Application status is pending and I cant add more pets' do
+  it 'when submitted the Application status is pending cant add more pets' do
     application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
     shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
 
@@ -202,5 +202,148 @@ RSpec.describe 'show application' do
     expect(page).to have_content("Pending")
     expect(page).to have_content("Scooby")
     expect(page).to_not have_content("Frank")
+  end
+
+  it 'admin routes to show page with priviledge' do
+  application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
+
+  visit "/admin/applications/#{application.id}"
+
+  expect(page).to have_content("Application Show Page")
+  end
+
+  it 'every pet on the application has a approve button' do
+    application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
+    shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
+
+    scooby = Pet.create!(name: 'Scooby', age: 2, breed: 'Great Dane', adoptable: true, shelter_id: shelter.id)
+    frank = Pet.create!(name: 'Frank', age: 1, breed: 'Pug', adoptable: true, shelter_id: shelter.id)
+
+    PetApplication.create!(pet: scooby, application: application)
+    PetApplication.create!(pet: frank, application: application)
+
+    visit "/admin/applications/#{application.id}"
+
+    within "#pets-#{scooby.id}" do
+      expect(page).to have_button("Approve")
+    end
+
+    within "#pets-#{frank.id}" do
+      expect(page).to have_button("Approve")
+    end
+  end
+
+  it 'every pet on the application has a reject button' do
+    application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
+    shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
+
+    scooby = Pet.create!(name: 'Scooby', age: 2, breed: 'Great Dane', adoptable: true, shelter_id: shelter.id)
+    frank = Pet.create!(name: 'Frank', age: 1, breed: 'Pug', adoptable: true, shelter_id: shelter.id)
+
+    PetApplication.create!(pet: scooby, application: application)
+    PetApplication.create!(pet: frank, application: application)
+
+    visit "/admin/applications/#{application.id}"
+
+    within "#pets-#{scooby.id}" do
+      expect(page).to have_button("Reject")
+    end
+
+    within "#pets-#{frank.id}" do
+      expect(page).to have_button("Reject")
+    end
+  end
+
+  it 'when clicked the approve button it takes the admin to the show page with the pet approved' do
+    application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
+    shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
+
+    scooby = Pet.create!(name: 'Scooby', age: 2, breed: 'Great Dane', adoptable: true, shelter_id: shelter.id)
+    frank = Pet.create!(name: 'Frank', age: 1, breed: 'Pug', adoptable: true, shelter_id: shelter.id)
+
+    PetApplication.create!(pet: scooby, application: application)
+    PetApplication.create!(pet: frank, application: application)
+
+    visit "/admin/applications/#{application.id}"
+
+    within "#pets-#{scooby.id}" do
+      click_on("Approve")
+    end
+
+    expect(current_path).to eq("/applications/#{application.id}")
+
+    within "#pets-#{scooby.id}" do
+      expect(page).to have_content("Approved")
+      expect(page).to_not have_button("Approve")
+      expect(page).to_not have_button("Reject")
+    end
+
+    within "#pets-#{frank.id}" do
+      expect(page).to have_button("Approve")
+      expect(page).to have_button("Reject")
+    end
+  end
+
+  it 'when clicked the reject button it takes the admin to the show page with the pet approved' do
+    application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
+    shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
+
+    scooby = Pet.create!(name: 'Scooby', age: 2, breed: 'Great Dane', adoptable: true, shelter_id: shelter.id)
+    frank = Pet.create!(name: 'Frank', age: 1, breed: 'Pug', adoptable: true, shelter_id: shelter.id)
+
+    PetApplication.create!(pet: scooby, application: application)
+    PetApplication.create!(pet: frank, application: application)
+
+    visit "/admin/applications/#{application.id}"
+
+    within "#pets-#{scooby.id}" do
+      click_on("Reject")
+    end
+
+    expect(current_path).to eq("/applications/#{application.id}")
+
+    within "#pets-#{scooby.id}" do
+      expect(page).to have_content("Rejected")
+      expect(page).to_not have_button("Approve")
+      expect(page).to_not have_button("Reject")
+    end
+
+    within "#pets-#{frank.id}" do
+      expect(page).to have_button("Approve")
+      expect(page).to have_button("Reject")
+    end
+  end
+
+  it 'approved or rejected pets do not affect other apps' do
+    application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
+    application_2 = Application.create!(name: 'Veronica', street_address: '145 Sad Ave', city: 'Los Angeles ', state: 'CA', zipcode: '90001', description: 'Need Pet Pics for Insta', status: 'In Progress')
+    shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
+
+    scooby = Pet.create!(name: 'Scooby', age: 2, breed: 'Great Dane', adoptable: true, shelter_id: shelter.id)
+    frank = Pet.create!(name: 'Frank', age: 1, breed: 'Pug', adoptable: true, shelter_id: shelter.id)
+
+    PetApplication.create!(pet: scooby, application: application)
+    PetApplication.create!(pet: scooby, application: application_2)
+
+    visit "/admin/applications/#{application.id}"
+
+    within "#pets-#{scooby.id}" do
+      click_on("Reject")
+    end
+
+    expect(current_path).to eq("/applications/#{application.id}")
+
+    within "#pets-#{scooby.id}" do
+      expect(page).to have_content("Rejected")
+      expect(page).to_not have_button("Approve")
+      expect(page).to_not have_button("Reject")
+    end
+
+    visit "/admin/applications/#{application_2.id}"
+
+    within "#pets-#{scooby.id}" do
+      expect(page).to have_button("Approve")
+      expect(page).to have_button("Reject")
+    end
   end
 end
