@@ -19,7 +19,7 @@ RSpec.describe 'show application' do
     expect(page).to have_link('Scooby')
   end
 
-  it "has a search and add a Pet to this Application" do
+  it "has a search and add a Pet to this Application" do #Wyatt user story
     application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
     shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
 
@@ -60,7 +60,7 @@ RSpec.describe 'show application' do
     end
   end
 
-  it "shows full name of pet with partial name of pet" do
+  it "shows full name of pet with partial name of pet" do #Ethan User Story
     application = Application.create!(name: 'Jeremy', street_address: '111 Nonya Ave', city: 'Denver', state: 'CO', zipcode: '80201', description: 'Dogs are rad', status: 'In Progress')
     shelter = Shelter.create!(name: 'Mystery Building', city: 'Irvine CA', foster_program: false, rank: 9)
 

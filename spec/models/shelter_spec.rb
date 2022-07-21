@@ -68,7 +68,7 @@ RSpec.describe Shelter, type: :model do
   end
 
   describe 'instance methods' do
-    describe '.adoptable_pets' do
+    describe 'adoptable_pets' do
       it 'only returns pets that are adoptable' do
         expect(@shelter_1.adoptable_pets).to eq([@pet_2, @pet_4])
       end
@@ -81,19 +81,19 @@ RSpec.describe Shelter, type: :model do
     end
 
 
-    describe '.alphabetical_pets' do
-      it 'returns pets associated with the given shelter in alphabetical name order' do
+    describe 'alphabetical_pets' do
+      it 'returns pets with the given shelter in alphabetical name order' do
         expect(@shelter_1.alphabetical_pets).to eq([@pet_4, @pet_2])
       end
     end
 
-    describe '.shelter_pets_filtered_by_age' do
+    describe 'shelter_pets_filtered_by_age' do
       it 'filters the shelter pets based on given params' do
         expect(@shelter_1.shelter_pets_filtered_by_age(5)).to eq([@pet_4])
       end
     end
 
-    describe '.pet_count' do
+    describe 'pet_count' do
       it 'returns the number of pets at the given shelter' do
         expect(@shelter_1.pet_count).to eq(3)
       end
